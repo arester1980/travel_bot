@@ -1,0 +1,1 @@
+worker: python geo_bot.py

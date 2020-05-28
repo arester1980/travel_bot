@@ -1,0 +1,6 @@
+telebot~=0.0.3
+geopy~=1.22.0
+geographiclib==1.50
+pyTelegramBotAPI==3.7.1
+requests==2.23.0
+six==1.15.0
