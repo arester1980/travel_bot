@@ -1,0 +1,13 @@
+telebot~=0.0.3
+geopy~=1.22.0
+geographiclib==1.50
+pyTelegramBotAPI==3.7.1
+requests==2.23.0
+six==1.15.0
+importlib-metadata==1.6.0
+jsonpickle==1.4.1
+pip==20.1.1
+setuptools==47.1.1
+six==1.15.0
+telebot== 0.0.3
+zipp==3.1.0
