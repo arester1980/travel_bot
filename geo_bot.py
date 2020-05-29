@@ -40,6 +40,7 @@ def coordi(message):
         link_gg = 'https://www.google.com/maps/place/{}'.format(coord)
         link_ya = 'https://yandex.com/maps/?text={}'.format(coord)
         link_ord = 'https://orda.of.by/.map/?{}'.format(coord)
+        link_maps = 'maps.google.com/{}'.format(coord)
         if cc == 'by':
             place.clear()
             place.append(coord)
@@ -48,6 +49,7 @@ def coordi(message):
             bot.send_message(message.chat.id, dist)
             bot.send_message(message.chat.id, 'This place on Yandex:\n{}'.format(link_ya))
             bot.send_message(message.chat.id, 'This place on Globus:\n{}'.format(link_ord))
+            bot.send_message(message.chat.id, 'This place on MapsMe:\n{}'.format(link_maps))
         else:
             print('None BY')
             coordi(message)

@@ -1,0 +1,4 @@
+keyboard = telebot.types.ReplyKeyboardMarkup(True)
+ya_button = telebot.types.InlineKeyboardButton(text="Посмотреть на Яндекс", url="'This place on Yandex:\n{}'.format(link_ya)")
+keyboard.add(ya_button)
+bot.send_message(message.chat.id, reply_markup=keyboard)
