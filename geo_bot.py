@@ -38,12 +38,18 @@ def coordi(message):
 		dist = round(float(dist[0]), 2)
 		dist = 'Distance between Minsk and this place: {} km.\nIf you want to know distance between you and this place ' \
 			   'send your location to bot'.format(dist)
-		link = 'https://www.google.com/maps/place/{}'.format(coord)
+		link_gg = 'https://www.google.com/maps/place/{}'.format(coord)
+		link_ya = 'https://yandex.by/maps/?text={}'.format(coord)
+		link_ord = 'https://orda.of.by/.map/?{}'.format(coord)
+		print(link_ya)
+		print(link_ord)
 		if cc == 'by':
 			place.clear()
 			place.append(coord)
 			bot.send_message(message.chat.id, "Why don't you go to:\n{}".format(loc))
-			bot.send_message(message.chat.id, link)
+			bot.send_message(message.chat.id, link_gg)
+			# bot.send_message(message.chat.id, link_ya)
+			# bot.send_message(message.chat.id, link_ord)
 			bot.send_message(message.chat.id, dist)
 		else:
 			print('None BY')
