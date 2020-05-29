@@ -48,8 +48,8 @@ def coordi(message):
 			place.append(coord)
 			bot.send_message(message.chat.id, "Why don't you go to:\n{}".format(loc))
 			bot.send_message(message.chat.id, link_gg)
-			# bot.send_message(message.chat.id, link_ya)
-			# bot.send_message(message.chat.id, link_ord)
+			bot.send_message(message.chat.id, link_ya)
+			bot.send_message(message.chat.id, link_ord)
 			bot.send_message(message.chat.id, dist)
 		else:
 			print('None BY')
