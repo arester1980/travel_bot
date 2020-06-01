@@ -6,6 +6,7 @@ import jsonpickle
 
 MINSK = (53.902221, 27.561924)
 place = []
+links = []
 
 bot = telebot.TeleBot(config.token)
 
@@ -13,52 +14,68 @@ bot = telebot.TeleBot(config.token)
 @bot.message_handler(commands=['start'])
 def get_locate(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(True)
-    button_get = telebot.types.InlineKeyboardButton(text='Get location')
+    button_get = telebot.types.InlineKeyboardButton(text='Куда отправиться?')
     keyboard.add(button_get)
-    bot.send_message(message.chat.id, 'Press button', reply_markup=keyboard)
+    bot.send_message(message.chat.id, 'Спроси куда тебе отправится', reply_markup=keyboard)
 
 
 @bot.message_handler(content_types=['text'])
 def coordi(message):
-    if message.text == 'Get location':
-        x = round(uniform(51.262, 56.172), 4)
-        y = round(uniform(23.178, 32.777), 4)
-        x, y = str(x), str(y)
-        coord = '{},{}'.format(x, y)
+    if message.text == 'Куда отправиться?': # случайные координаты в приблизительных границах Беларуси
+        lon = round(uniform(51.262, 56.172), 4)
+        lat = round(uniform(23.178, 32.777), 4)
+        lon, lat = str(lon), str(lat)
+        coord = '{},{}'.format(lon, lat)
         geolocator = Nominatim(user_agent='geobot')
-        location = geolocator.reverse(coord)
-        r = location.raw
-        adr = r.get('address')
-        cc = adr.get('country_code')
-        loc = location.address
-        dist = distance.distance(MINSK, coord)
-        dist = str(dist)
-        dist = dist.split(' ')
-        dist = round(float(dist[0]), 2)
-        dist = 'Distance between Minsk and this place: {} km.\nIf you want to know distance between you and this place ' \
-               'send your location to bot'.format(dist)
-        link_gg = 'https://www.google.com/maps/place/{}'.format(coord)
-        link_ya = 'https://yandex.com/maps/?text={}'.format(coord)
-        link_ord = 'https://orda.of.by/.map/?{}'.format(coord)
-        link_maps = 'maps.google.com/{}'.format(coord)
+        location = geolocator.reverse(coord) # получаем место на карте по координатам
+        r = location.raw # получаем json
+        adr = r.get('address')  # из json берем адрес
+        cc = adr.get('country_code') # из адреса берем код страны
         if cc == 'by':
             place.clear()
-            place.append(coord)
-            bot.send_message(message.chat.id, "Why don't you go to:\n{}".format(loc))
-            bot.send_message(message.chat.id, link_gg)
-            bot.send_message(message.chat.id, dist)
-            bot.send_message(message.chat.id, 'This place on Yandex:\n{}'.format(link_ya))
-            bot.send_message(message.chat.id, 'This place on Globus:\n{}'.format(link_ord))
-            bot.send_message(message.chat.id, 'This place on MapsMe:\n{}'.format(link_maps))
+            loc = location.address  # строка с человекочитаемым адресом
+            place.append(coord) # переписываем значение координат места
+            place.append(loc)
+            dist = distance.distance(MINSK, coord)  # вычисление расстояния между Минском и адресом
+            dist = str(dist)
+            dist = dist.split(' ')
+            dist = round(float(dist[0]), 2)  # округленное значение расстояния
+            dist = 'Растояние от Октябрьской площади Минска до этого места: {} km.\nЧто бы узнать расстояние от ' \
+                   'твоего местонахождения до {} пришли боту свою геолокацию или проложи свой маршрут с ' \
+                   'использованием одного из сервисов'.format(dist, loc.split(',')[0])
+            links.clear()
+            links.append('Это место на картах Google":\nhttps://www.google.com/maps/place/{}'.format(coord))
+            links.append('Это место на картах Yandex:\nhttps://yandex.com/maps/?text={}'.format(coord))
+            links.append('Это место на картах архитектурного наследия Беларуси:\nhttps://orda.of.by/.map/?{}'.format(coord))
+            links.append('Это место на картах MapsMe:\nmaps.google.com/{}'.format(coord))
+            keyboard = telebot.types.InlineKeyboardMarkup()
+            key_ya = telebot.types.InlineKeyboardButton(text='Yandex', callback_data='ya')
+            key_gg = telebot.types.InlineKeyboardButton(text='Google', callback_data='gg')
+            key_globus = telebot.types.InlineKeyboardButton(text='карты Globus.tut.by', callback_data='globus')
+            key_maps = telebot.types.InlineKeyboardButton(text='приложение Maps.me', callback_data='maps')
+            keyboard.add(key_ya, key_gg)
+            keyboard.add(key_globus, key_maps)
+            bot.send_message(message.chat.id, "Почему бы сегодня не отправится:\n{}".format(loc)) #.split(',')[0]))
+            bot.send_message(message.chat.id, dist, reply_markup=keyboard)
         else:
             print('None BY')
             coordi(message)
 
+@bot.callback_query_handler(func=lambda call: True)
+def callback_worker(call):
+    global links
+    if call.data == "ya":
+        bot.send_message(call.message.chat.id, links[1])
+    if call.data == "gg":
+        bot.send_message(call.message.chat.id, links[0])
+    if call.data == "globus":
+        bot.send_message(call.message.chat.id, links[2])
+    if call.data == "maps":
+        bot.send_message(call.message.chat.id, links[3])
 
 @bot.message_handler(content_types=['location'])
 def calc_distance(message):
     global place
-    x = message
     x = jsonpickle.encode(message)
     xs = x.split(',')
     xsr = xs[78:80]
@@ -78,12 +95,10 @@ def calc_distance(message):
     place_float = []
     for i in x:
         place_float.append(float(i))
-    yourdist = distance.distance(loc_float, place_float)
-    yourdist = str(yourdist)
+    yourdist = str(distance.distance(loc_float, place_float))
     yourdist = yourdist.split(' ')
     yourdist = round(float(yourdist[0]), 2)
-    res = 'Distance between your and this place: {} km'.format(yourdist)
-    bot.send_message(message.chat.id, res)
-
+    place = place[1]
+    bot.send_message(message.chat.id, 'Расстояние от тебя до {}: {} km'.format(place.split(',')[0], yourdist))
 
 bot.polling()
