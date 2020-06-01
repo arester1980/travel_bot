@@ -1,14 +1,17 @@
-import config
+# import config
 from geopy import Nominatim, distance
 from random import uniform
 import telebot
 import jsonpickle
+import os
+
+token = os.getenv("token")
 
 MINSK = (53.902221, 27.561924)
 place = []
 links = []
 
-bot = telebot.TeleBot(config.token)
+bot = telebot.TeleBot(token)
 
 
 @bot.message_handler(commands=['start'])
