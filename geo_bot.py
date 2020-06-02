@@ -7,10 +7,12 @@ import os
 token = os.getenv("token")
 bot = telebot.TeleBot(token)
 
+
 MINSK = (53.902221, 27.561924)
 
 place = []
 links = []
+# 1171904194:AAGtjGvd_oKWFUOUa_DNg0o3UdrN7zR_sZk
 
 
 @bot.message_handler(commands=['start'])
@@ -95,6 +97,7 @@ def calc_distance(message):
         loc_float.append(float(i))
     y = place[0].split(',')
     place_float = []
+    # place_float.clear()
     for i in y:
         place_float.append(float(i))
     yourdist = str(distance.distance(loc_float, place_float))
