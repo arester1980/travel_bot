@@ -2,16 +2,18 @@ from geopy import Nominatim, distance
 from random import uniform
 import telebot
 import jsonpickle
-import os
-
-token = os.getenv("token")
-bot = telebot.TeleBot(token)
+# import os
+#
+# token = os.getenv("token")
+bot = telebot.TeleBot('1171904194:AAGtjGvd_oKWFUOUa_DNg0o3UdrN7zR_sZk')
 
 
 MINSK = (53.902221, 27.561924)
 
 place = []
 links = []
+bike = []
+
 # 1171904194:AAGtjGvd_oKWFUOUa_DNg0o3UdrN7zR_sZk
 
 
@@ -19,11 +21,17 @@ links = []
 def get_locate(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(True)
     button_get = telebot.types.InlineKeyboardButton(text='Куда отправиться?')
+    button_bike = telebot.types.InlineKeyboardButton(text='Точка в радиусе')
     keyboard.add(button_get)
+    keyboard.add(button_bike)
     bot.send_message(message.chat.id, 'Спроси куда тебе отправится', reply_markup=keyboard)
 
 
 @bot.message_handler(content_types=['text'])
+def get_data(message):
+    # global bike
+    bot.send_message(message.chat.id, bike)
+
 def coordi(message):
     if message.text == 'Куда отправиться?': # случайные координаты в приблизительных границах Беларуси
         lon = round(uniform(51.262, 56.172), 4)
@@ -59,11 +67,17 @@ def coordi(message):
             key_maps = telebot.types.InlineKeyboardButton(text='приложение Maps.me', callback_data='maps')
             keyboard.add(key_ya, key_gg)
             keyboard.add(key_globus, key_maps)
-            bot.send_message(message.chat.id, "Почему бы сегодня не отправится:\n{}".format(loc)) #.split(',')[0]))
+            bot.send_message(message.chat.id, "Почему бы сегодня не отправится:\n{}".format(loc))
             bot.send_message(message.chat.id, dist, reply_markup=keyboard)
+        if message == 'Точка в радиусе':
+            send = bot.message_handler(commands=['text'])
+            bot.register_next_step_handler(send, get_data)
+            # bike.append(send)
         else:
             print('None BY')
             coordi(message)
+
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(call):
@@ -76,6 +90,7 @@ def callback_worker(call):
         bot.send_message(call.message.chat.id, links[2])
     if call.data == "maps":
         bot.send_message(call.message.chat.id, links[3])
+
 
 @bot.message_handler(content_types=['location'])
 def calc_distance(message):
@@ -105,5 +120,6 @@ def calc_distance(message):
     yourdist = round(float(yourdist[0]), 2)
     your_place = place[1]
     bot.send_message(message.chat.id, 'Расстояние от тебя до {}: {} km'.format(your_place.split(',')[0], yourdist))
+
 
 bot.polling()
