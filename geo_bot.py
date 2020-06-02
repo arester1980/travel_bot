@@ -5,8 +5,10 @@ import jsonpickle
 import os
 
 token = os.getenv("token")
+bot = telebot.TeleBot(token)
 
 MINSK = (53.902221, 27.561924)
+
 place = []
 links = []
 
