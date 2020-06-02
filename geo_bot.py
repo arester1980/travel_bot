@@ -1,4 +1,3 @@
-# import config
 from geopy import Nominatim, distance
 from random import uniform
 import telebot
@@ -10,8 +9,6 @@ token = os.getenv("token")
 MINSK = (53.902221, 27.561924)
 place = []
 links = []
-
-bot = telebot.TeleBot(token)
 
 
 @bot.message_handler(commands=['start'])
@@ -94,14 +91,14 @@ def calc_distance(message):
     loc_float = []
     for i in loc_list:
         loc_float.append(float(i))
-    x = place[0].split(',')
+    y = place[0].split(',')
     place_float = []
-    for i in x:
+    for i in y:
         place_float.append(float(i))
     yourdist = str(distance.distance(loc_float, place_float))
     yourdist = yourdist.split(' ')
     yourdist = round(float(yourdist[0]), 2)
-    place = place[1]
-    bot.send_message(message.chat.id, 'Расстояние от тебя до {}: {} km'.format(place.split(',')[0], yourdist))
+    your_place = place[1]
+    bot.send_message(message.chat.id, 'Расстояние от тебя до {}: {} km'.format(your_place.split(',')[0], yourdist))
 
 bot.polling()
