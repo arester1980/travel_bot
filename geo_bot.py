@@ -18,7 +18,7 @@ links = []
 
 @bot.message_handler(commands=['start'])
 def get_locate(message):
-    # keyboard = telebot.types.ReplyKeyboardMarkup(True)
+    keyboard = telebot.types.ReplyKeyboardMarkup(True)
     # button_get = telebot.types.InlineKeyboardButton(text='Куда отправиться?')
     # button_bike = telebot.types.InlineKeyboardButton(text='Точка в радиусе')
     # keyboard.add(button_get)
@@ -29,14 +29,18 @@ def get_locate(message):
 
 @bot.message_handler(content_types=['text'])
 def get_data(message):
-    x = jsonpickle.encode(message)
-    xs = x.split(',')
-    xsr = xs[::-1]
-    print(x)
-    for i in xs:
-        if '"text": ' in i:
-            print(i)
-    # bot.send_message(message.chat.id, d)
+    x_json = jsonpickle.encode(message)
+    x_list = x_json.split(':')
+    x_rawtext = x_list[82]
+    x_text = x_rawtext.replace('"', '')
+    x_text = x_text.rstrip('}')
+    x_text = x_text.replace(' ', '')
+    if x_text.isnumeric():
+        rang = int(x_text)
+        km = 10+rang
+        bot.send_message(message.chat.id, km)
+    else:
+        bot.send_message(message.chat.id, 'Введите число')
 
 # def coordi(message):
 #     if message.text == 'Куда отправиться?': # случайные координаты в приблизительных границах Беларуси
