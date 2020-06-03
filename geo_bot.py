@@ -8,11 +8,12 @@ import jsonpickle
 bot = telebot.TeleBot('1171904194:AAGtjGvd_oKWFUOUa_DNg0o3UdrN7zR_sZk')
 
 
-MINSK = (53.902221, 27.561924)
+# MINSK = (53.902221, 27.561924)
 PRILUKI = (53.797048, 27.450923)
 
 place = []
 links = []
+coordie = str()
 
 # 1171904194:AAGtjGvd_oKWFUOUa_DNg0o3UdrN7zR_sZk
 
@@ -38,15 +39,12 @@ def get_data(message):
     x_text = x_text.replace(' ', '')
     if x_text.isnumeric():
         rang = int(x_text)
-        lon = round(uniform(51.262, 56.172), 4)
-        lat = round(uniform(23.178, 32.777), 4)
-        lon, lat = str(lon), str(lat)
-        coord = '{},{}'.format(lon, lat)
+        coord = loc_coord(rang)
         geolocator = Nominatim(user_agent='geobot')
         location = geolocator.reverse(coord) # получаем место на карте по координатам
         dist = distance.distance(PRILUKI, coord)
         if dist <= rang:
-            r = location.raw  # получаем json
+            # r = location.raw  # получаем json
             adr = location.address
             bot.send_message(message.chat.id, adr)
         else:
@@ -55,6 +53,30 @@ def get_data(message):
     else:
         bot.send_message(message.chat.id, 'Введите число')
 
+def loc_coord(rang):
+    global coord
+    if rang >= 350:
+        lon = round(uniform(51.262, 56.172), 4)
+        lat = round(uniform(23.178, 32.777), 4)
+        lon, lat = str(lon), str(lat)
+        lon, lat = str(lon), str(lat)
+        coord = '{},{}'.format(lon, lat)
+    if rang < 350 > 250:
+        lon = round(uniform(52.810301, 55.198531), 4)
+        lat = round(uniform(25.182139, 30.224863), 4)
+        lon, lat = str(lon), str(lat)
+        coord = '{},{}'.format(lon, lat)
+    if rang < 250 > 100:
+        lon = round(uniform(53.114033, 54.551548), 4)
+        lat = round(uniform(26.014977, 29.240141), 4)
+        lon, lat = str(lon), str(lat)
+        coord = '{},{}'.format(lon, lat)
+    if rang < 100:
+        lon = round(uniform(53.527442, 54.318074), 4)
+        lat = round(uniform(26.388708, 28.721070), 4)
+        lon, lat = str(lon), str(lat)
+        coord = '{},{}'.format(lon, lat)
+    return coord
 
 # def coordi(message):
 #     if message.text == 'Куда отправиться?': # случайные координаты в приблизительных границах Беларуси
