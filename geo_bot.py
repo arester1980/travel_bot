@@ -44,9 +44,13 @@ def get_data(message):
         location = geolocator.reverse(coord) # получаем место на карте по координатам
         dist = distance.distance(PRILUKI, coord)
         if dist <= rang:
-            # r = location.raw  # получаем json
             adr = location.address
-            bot.send_message(message.chat.id, adr)
+            place.append(adr)
+            dist = str(dist)
+            dist = dist.split(' ')
+            dist = round(float(dist[0]), 2)  # округленное значение расстояния
+            dist = 'Растояние от Прилук до этого места: {} km'.format(dist)
+            bot.send_message(message.chat.id, dist)
         else:
             print('another place')
             get_data(message)
