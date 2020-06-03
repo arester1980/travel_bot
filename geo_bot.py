@@ -8,7 +8,8 @@ import jsonpickle
 bot = telebot.TeleBot('1171904194:AAGtjGvd_oKWFUOUa_DNg0o3UdrN7zR_sZk')
 
 
-# MINSK = (53.902221, 27.561924)
+MINSK = (53.902221, 27.561924)
+PRILUKI = (53.797048, 27.450923)
 
 place = []
 links = []
@@ -37,10 +38,23 @@ def get_data(message):
     x_text = x_text.replace(' ', '')
     if x_text.isnumeric():
         rang = int(x_text)
-        km = 10+rang
-        bot.send_message(message.chat.id, km)
+        lon = round(uniform(51.262, 56.172), 4)
+        lat = round(uniform(23.178, 32.777), 4)
+        lon, lat = str(lon), str(lat)
+        coord = '{},{}'.format(lon, lat)
+        geolocator = Nominatim(user_agent='geobot')
+        location = geolocator.reverse(coord) # получаем место на карте по координатам
+        dist = distance.distance(PRILUKI, coord)
+        if dist <= rang:
+            r = location.raw  # получаем json
+            adr = location.address
+            bot.send_message(message.chat.id, adr)
+        else:
+            print('another place')
+            get_data(message)
     else:
         bot.send_message(message.chat.id, 'Введите число')
+
 
 # def coordi(message):
 #     if message.text == 'Куда отправиться?': # случайные координаты в приблизительных границах Беларуси
