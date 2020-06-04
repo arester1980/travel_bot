@@ -36,14 +36,17 @@ def get_data(message):
     x_rawtext = x_list[82]
     x_text = x_rawtext.replace('"', '')
     x_text = x_text.rstrip('}')
-    x_text = x_text.replace(' ', '')
-    if x_text.isnumeric():
+    x_text = x_text.replace(' ', '') # содержание сообщения
+    if x_text.isnumeric(): # проверка сообщения на число
         rang = int(x_text)
-        coord = loc_coord(rang)
+        coord, rang_rng = loc_coord(rang)
         geolocator = Nominatim(user_agent='geobot')
         location = geolocator.reverse(coord) # получаем место на карте по координатам
         dist = distance.distance(PRILUKI, coord)
-        if dist <= rang:
+        dist = str(dist)
+        dist = dist.split(' ')
+        dist = round(float(dist[0])) # из введенного пользователя значения получаем километраж
+        if dist in rang_rng:
             adr = location.address
             place.append(adr)
             dist = str(dist)
@@ -59,20 +62,24 @@ def get_data(message):
 
 def loc_coord(rang):
     global coord
+    rang_prc = rang/5 #20 процентов от желаемой дистанции
+    rang_min = int(rang-rang_prc)
+    rang_max = int(rang+rang_prc)
+    rang_rng = [i for i in range(rang_min, rang_max)] # список расстояний от минимального до макисмального
     if rang >= 350:
-        lon = round(uniform(51.262, 56.172), 4)
-        lat = round(uniform(23.178, 32.777), 4)
+        lon = round(uniform(54.551550, 56.172), 4)
+        lat = round(uniform(30.224864, 32.777), 4)
         lon, lat = str(lon), str(lat)
         lon, lat = str(lon), str(lat)
         coord = '{},{}'.format(lon, lat)
     if rang < 350 > 250:
-        lon = round(uniform(52.810301, 55.198531), 4)
-        lat = round(uniform(25.182139, 30.224863), 4)
+        lon = round(uniform(54.551549, 55.198531), 4)
+        lat = round(uniform(29.240142, 30.224863), 4)
         lon, lat = str(lon), str(lat)
         coord = '{},{}'.format(lon, lat)
     if rang < 250 > 100:
-        lon = round(uniform(53.114033, 54.551548), 4)
-        lat = round(uniform(26.014977, 29.240141), 4)
+        lon = round(uniform(54.318075, 54.551548), 4)
+        lat = round(uniform(28.721071, 29.240141), 4)
         lon, lat = str(lon), str(lat)
         coord = '{},{}'.format(lon, lat)
     if rang < 100:
@@ -80,7 +87,7 @@ def loc_coord(rang):
         lat = round(uniform(26.388708, 28.721070), 4)
         lon, lat = str(lon), str(lat)
         coord = '{},{}'.format(lon, lat)
-    return coord
+    return coord, rang_rng
 
 # def coordi(message):
 #     if message.text == 'Куда отправиться?': # случайные координаты в приблизительных границах Беларуси
