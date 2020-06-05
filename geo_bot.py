@@ -23,7 +23,13 @@ def get_locate(message):
 def get_data(message):
     if message.text == 'Любая точка Беларуси':
         anypoint = AnyPoint()
-        print(anypoint)
+        anypointloc = anypoint.any_location()
+        # check = anypoint.check_location()
+        # print(f'это экземпляр класса anypoint: {anypoint}')
+        print(f'это результат работы метода any_location класса anypoint: {anypointloc}')
+        print(anypointloc[0])
+        print(anypointloc[1])
+        # print(f'это результат работы метода check_location класса anypoint: {check}')
 
 @bot.message_handler(content_types=['location']) # получает локацию и переписывает user_location
 def calc_distance(message):
@@ -31,7 +37,6 @@ def calc_distance(message):
     x = jsonpickle.encode(message)
     xs = x.split(',')
     xsr = xs[78:80]
-    print(xsr)
     lat = []
     lon = []
     for i in xsr[0]:
@@ -45,7 +50,8 @@ def calc_distance(message):
     for i in loc_list:
         loc_float.append(float(i))
     user_location = UserPoint(loc_float[0])
-    print(user_location.coord())
+    # bot.send_message(message.chat.id, "Почему бы сегодня не отправится:\n{}".format(loc))
+    print(f'это результат работы метода coord у класса UserPoint: {user_location.coord()}')
 
 
 class UserPoint:
@@ -60,23 +66,37 @@ class UserPoint:
 
 class AnyPoint(UserPoint):  # случайная точка на карте. наследование дает возможность использовать здесь coord
     def __init__(self):
-        x = True
-        while x == True:
-            self.lon = round(uniform(51.262, 56.172), 4)
-            self.lat = round(uniform(23.178, 32.777), 4)
-            coord = [self.lon, self.lat]
-            geolocator = Nominatim(user_agent='geobot')
-            location = geolocator.reverse(coord) # получаем место на карте по координатам
-            r = location.raw # получаем json
-            adr = r.get('address')  # из json берем адрес
-            cc = adr.get('country_code') # из адреса берем код страны
-            if cc == 'by':
-                print(coord)
-                print(adr)
-                x = False
-            else:
-                print('Non BY')
-                print(adr)
+        self.lon = round(uniform(51.262, 56.172), 4)
+        self.lat = round(uniform(23.178, 32.777), 4)
+        coord = [self.lon, self.lat]
+        # print(f'это печать прямо из конструктора класса anypoint: {coord}')
+
+    def any_location(self):
+        coord = self.coord()
+        geolocator = Nominatim(user_agent='geobot')
+        location = geolocator.reverse(coord) # получаем место на карте по координатам
+        r = location.raw # получаем json
+        adr = r.get('address')  # из json берем адрес
+        cc = adr.get('country_code') # из адреса берем код страны
+        print(f'это cc полученный внутри метода any_location: {cc}')
+        print(f'это adr полученный внутри метода any_location: {adr}')
+        return cc, adr
+
+    def check_location(self):
+        cc, adr = self.any_location()
+        # print(f'результат работы adr {adr}')
+        return adr
+        # cc, coord, adr = AnyPoint.any_location(self)
+        # if cc == 'by':
+        #     print(f'это координаты которые прилители в any_location из конструктора: {coord}')
+        #     print(f'это адресс в any_location: {adr}')
+        #         x = False
+        # else:
+        #     print('Non BY')
+        #         print(f'это адресс в any_location else: {adr}')
+        #         z = AnyPoint()
+        #         AnyPoint.any_location(z)
+
 #
 # class Distation:
 #     def calc_dis(self, user, place):
