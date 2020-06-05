@@ -2,6 +2,7 @@ from geopy import Nominatim, distance
 from random import uniform
 import telebot
 import jsonpickle
+import json
 # import os
 
 # token = os.getenv("token")
@@ -68,42 +69,48 @@ def get_data(message):
             print('None BY')
             get_data(message)
     if message.text == 'Точка на определенном расстоянии от тебя':
-        bot.send_message(message.chat.id, 'Введите количество километров, которое ты готов преодолеть. Точка будет на этом расстоянии +/- 20%')
-    else:
-        parc(message)
-
-def parc(message):
-    # message = message.text
-    # print(message)
-    x_json = jsonpickle.encode(message)
-    x_list = x_json.split(':')
-    x_rawtext = x_list[82]
-    x_text = x_rawtext.replace('"', '')
-    x_text = x_text.rstrip('}')
-    x_text = x_text.replace(' ', '') # содержание сообщения
-    print(x_text)
-    if x_text.isnumeric(): # проверка сообщения на число
-        rang = int(x_text)
-        coord, rang_rng = loc_coord(rang) # вернулся диапазон расстояний 20%
-        geolocator = Nominatim(user_agent='geobot')
-        location = geolocator.reverse(coord) # получаем место на карте по координатам
-        dist = distance.distance(PRILUKI, coord)
-        dist = str(dist)
-        dist = dist.split(' ')
-        dist = round(float(dist[0])) # из введенного пользователя значения получаем километраж
-        if dist in rang_rng:
-            adr = location.address
-            place.append(adr)
+        bot.send_message(message.chat.id, 'Пришли боту свою геолокацию а затем введи количество километров, которое '
+                                          'ты готов преодолеть сегодня. Точка будет на этом расстоянии +/- 20%')
+    elif message.text != 'Точка на определенном расстоянии от тебя' or 'Любая точка Беларуси':
+        x_json = jsonpickle.encode(message)
+        x_list = x_json.split(':')
+        x_rawtext = x_list[82]
+        x_text = x_rawtext.replace('"', '')
+        x_text = x_text.rstrip('}')
+        x_text = x_text.replace(' ', '')  # содержание сообщения
+        if x_text.isnumeric():  # проверка сообщения на число
+            rang = int(x_text)
+            coord, rang_rng = loc_coord(rang)  # вернулся диапазон расстояний 20%
+            geolocator = Nominatim(user_agent='geobot')
+            location = geolocator.reverse(coord)  # получаем место на карте по координатам
+            dist = distance.distance(PRILUKI, coord)
             dist = str(dist)
             dist = dist.split(' ')
-            dist = round(float(dist[0]), 2)  # округленное значение расстояния
-            dist = 'Растояние от Прилук до {} этого места: {} km'.format(adr, dist)
-            bot.send_message(message.chat.id, dist)
+            dist = round(float(dist[0]))  # из введенного пользователя значения получаем километраж
+            if dist in rang_rng:
+                adr = location.address
+                place.append(adr)
+                dist = str(dist)
+                dist = dist.split(' ')
+                dist = round(float(dist[0]), 2)  # округленное значение расстояния
+                dist = 'Растояние от Прилук до {} этого места: {} km'.format(adr, dist)
+                bot.send_message(message.chat.id, dist)
+            else:
+                print('another distance')
+                # parc(message, x_text)
         else:
-            print('another distance')
-            parc(message)
-    else:
-        bot.send_message(message.chat.id, 'Введите число')
+            bot.send_message(message.chat.id, 'Введите число или нажмите одну из кнопок')
+
+        # parc(message, x_text)
+
+# def parc(message, x_text):
+    # x_json = jsonpickle.encode(message)
+    # x_list = x_json.split(':')
+    # x_rawtext = x_list[82]
+    # x_text = x_rawtext.replace('"', '')
+    # x_text = x_text.rstrip('}')
+    # x_text = x_text.replace(' ', '') # содержание сообщения
+
 
 def loc_coord(rang):
     global coord
