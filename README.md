@@ -6,8 +6,7 @@ Telebot, geopy and random library.
 * Can get links for yandex.maps, google.maps, maps.me and orda.tut.by (Map of architect heritance of Belarus).
 * Can count distance beetwen user location and random place
 * Can count distance beetwen any geopposition and random place 
----
-<https://t.me/rndmgeo_bot>
----
 ## Deploy on
 Heroku
+---
+<https://t.me/rndmgeo_bot>
