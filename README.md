@@ -7,4 +7,4 @@ Telebot, geopy and random library.
 * Can count distance beetwen user location and random place
 * Can count distance beetwen any geopposition and random place 
 ---
-<http://@rndmgeo_bot/>
+<https://t.me/rndmgeo_bot>
