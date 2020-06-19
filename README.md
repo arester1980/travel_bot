@@ -8,3 +8,6 @@ Telebot, geopy and random library.
 * Can count distance beetwen any geopposition and random place 
 ---
 <https://t.me/rndmgeo_bot>
+---
+## Deploy on
+Heroku
