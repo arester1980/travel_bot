@@ -46,10 +46,18 @@ def get_data(message):
             print(loc)
             wikipedia.set_lang("ru")
             wiki_loc = loc.split(",")
-            page = wikipedia.page(wiki_loc[2])
-            url = page.url
-            place.append(coord) # переписываем значение координат места
-            place.append(loc)
+            print(wiki_loc)
+            for i in wiki_loc:
+                if i != ' Беларусь':
+                        try:
+                            page = wikipedia.page(i)
+                            url = page.url
+                            # print(url)
+                            links.append(url)
+                        except:
+                            print('s')
+            # place.append(coord) # переписываем значение координат места
+            # place.append(loc)
             # dist = distance.distance(MINSK, coord)  # вычисление расстояния между Минском и адресом
             # dist = str(dist)
             # dist = dist.split(' ')
@@ -57,13 +65,13 @@ def get_data(message):
             # dist = 'Растояние от Октябрьской площади Минска до этого места: {} km.\nЧто бы узнать расстояние от ' \
             #         'твоего местонахождения до {} пришли боту свою геолокацию или проложи свой маршрут с ' \
             #         'использованием одного из сервисов'.format(dist, loc.split(',')[0])
-            links.clear()
-            # links.append('Это место на картах Google":\nhttps://www.google.com/maps/place/{}'.format(coord))
+            # links.clear()
+            print(links)
+            # for i in links:
+            #     print('{}'links.append('Wiki 1":\nhttps://www.google.com/maps/place/{}'.format(coord))
             # links.append('Это место на картах Yandex:\nhttps://yandex.com/maps/?text={}'.format(coord))
             # links.append('Это место на картах архитектурного наследия Беларуси:\nhttps://orda.of.by/.map/?{}'.format(coord))
             # links.append('Это место на картах MapsMe:\nmaps.google.com/{}'.format(coord))
-            links.append('Это место Wiki: {}'.format(url))
-            keyboard = telebot.types.InlineKeyboardMarkup()
             # key_ya = telebot.types.InlineKeyboardButton(text='Yandex', callback_data='ya')
             # key_gg = telebot.types.InlineKeyboardButton(text='Google', callback_data='gg')
             # key_globus = telebot.types.InlineKeyboardButton(text='карты Globus.tut.by', callback_data='globus')
@@ -71,22 +79,13 @@ def get_data(message):
             key_wiki = telebot.types.InlineKeyboardButton(text='Wiki', callback_data='wiki')
             # keyboard.add(key_ya, key_gg)
             # keyboard.add(key_globus, key_maps)
-            keyboard.add(key_wiki)
-            bot.send_message(message.chat.id, "Почему бы сегодня не отправится:\n{}".format(loc))
-            # bot.send_message(message.chat.id, dist, reply_markup=keyboard)
-            wiki_loc = loc.split(',')
-            wikipedia.set_lang('ru')
-            print(wiki_loc)
-            for i in wiki_loc:
-                if i != " Беларусь":
-                    try:
-                        bot.send_message(message.chat.id, i, reply_markup=keyboard)
-                    except:
-                        print('Exception')
-
+            # keyboard.add(key_wiki)
+            # bot.send_message(message.chat.id, "Почему бы сегодня не отправится:\n{}".format(loc))
+            # bot.send_message(message.chat.id, 'ss', reply_markup=keyboard)
+            keyboard = telebot.types.InlineKeyboardMarkup()
         else:
             print('None BY')
-            get_data(message)
+            # get_data(message)
     # if message.text == 'Точка на определенном расстоянии от тебя':
     #     bot.send_message(message.chat.id, 'Пришли боту свою геолокацию а затем введи количество километров, которое '
     #                                       'ты готов преодолеть сегодня. Точка будет на этом расстоянии +/- 20%')
@@ -172,7 +171,8 @@ def callback_worker(call):
     # if call.data == "maps":
     #     bot.send_message(call.message.chat.id, links[3])
     if call.data == "wiki":
-        bot.send_message(call.message.chat.id, links[0])
+        for i in links:
+            bot.send_message(call.message.chat.id, i)
 
 
 # @bot.message_handler(content_types=['location'])
