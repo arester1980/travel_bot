@@ -4,7 +4,7 @@ future==0.18.2
 geocoder==1.38.1
 geographiclib==1.50
 geopy==1.22.0
-pip==19.0.3
+pip==19.2
 pyTelegramBotAPI==3.6.7
 ratelim==0.1.6
 requests==2.7.0
