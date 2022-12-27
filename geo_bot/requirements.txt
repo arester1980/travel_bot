@@ -8,6 +8,6 @@ pip==21.1
 pyTelegramBotAPI==3.6.7
 ratelim==0.1.6
 requests==2.20.0
-setuptools==40.8.0
+setuptools==65.5.1
 six==1.14.0
 telebot==0.0.3
