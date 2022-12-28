@@ -7,6 +7,6 @@ six==1.15.0
 importlib-metadata==1.6.0
 jsonpickle==1.4.1
 pip==21.1
-setuptools==47.1.1
+setuptools==65.5.1
 six==1.15.0
 zipp==3.1.0
